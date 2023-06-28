@@ -4,20 +4,21 @@ import { ConfigService } from '@nestjs/config';
 
 @Controller()
 export class AppController {
-  constructor(
-    private readonly appService: AppService,
-    private configService: ConfigService,
-  ) {}
+    constructor(
+        private readonly appService: AppService,
+        private configService: ConfigService,
+    ) {}
 
-  @Get()
-  @Render('home')
-  root() {
-    console.log('Check port : ', this.configService.get<string>('PORT'));
-    return this.appService.getHello();
-  }
+    @Get()
+    @Render('home')
+    root() {
+        console.log('Check port : ', this.configService.get<string>('PORT'));
 
-  @Get()
-  getHello(): string {
-    return this.appService.getHello();
-  }
+        return { message: this.appService.getHello() };
+    }
+
+    // @Get()
+    // getHello(): string {
+    //   return this.appService.getHello();
+    // }
 }
