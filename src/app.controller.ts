@@ -9,16 +9,10 @@ export class AppController {
         private configService: ConfigService,
     ) {}
 
+   
+
     @Get()
-    @Render('home')
-    root() {
-        console.log('Check port : ', this.configService.get<string>('PORT'));
-
-        return { message: this.appService.getHello() };
+    getHello(): string {
+      return this.appService.getHello();
     }
-
-    // @Get()
-    // getHello(): string {
-    //   return this.appService.getHello();
-    // }
 }

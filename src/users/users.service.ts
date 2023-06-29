@@ -3,7 +3,7 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { InjectModel } from '@nestjs/mongoose';
 import { User } from './schemas/user.schema';
-import { Model } from 'mongoose';
+import mongoose, { Model } from 'mongoose';
 import { genSaltSync, hashSync } from 'bcryptjs';
 @Injectable()
 export class UsersService {
@@ -29,24 +29,31 @@ export class UsersService {
         return user;
     }
 
-    async findAll() {
-        const users = await this.userModel.find();
+    findAll() {
+        const users = this.userModel.find();
         return users;
     }
 
     findOne(id: string) {
-        console.log('id', id);
-        const user = this.userModel.findOne({ _id: id });
+        try {
+            if (!mongoose.Types.ObjectId.isValid(id)) return 'not found user!';
 
-        // console.log('user', user);
-        return user;
+            return this.userModel.findOne({ _id: id });
+        } catch (error) {}
     }
 
-    update(id: number, updateUserDto: UpdateUserDto) {
-        return `This action updates a #${id} user`;
+    update(updateUserDto: UpdateUserDto) {
+        return this.userModel.updateOne(
+            { _id: updateUserDto._id },
+            { ...updateUserDto },
+        );
     }
 
-    remove(id: number) {
-        return `This action removes a #${id} user`;
+    remove(id: string) {
+        try {
+            if (!mongoose.Types.ObjectId.isValid(id)) return 'not found user!';
+            
+            return this.userModel.deleteOne({ _id: id });
+        } catch (error) {}
     }
 }
