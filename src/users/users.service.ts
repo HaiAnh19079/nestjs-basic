@@ -4,7 +4,7 @@ import { UpdateUserDto } from './dto/update-user.dto';
 import { InjectModel } from '@nestjs/mongoose';
 import { User } from './schemas/user.schema';
 import mongoose, { Model } from 'mongoose';
-import { genSaltSync, hashSync } from 'bcryptjs';
+import { compareSync, genSaltSync, hashSync } from 'bcryptjs';
 @Injectable()
 export class UsersService {
     constructor(@InjectModel(User.name) private userModel: Model<User>) {}
@@ -30,8 +30,7 @@ export class UsersService {
     }
 
     findAll() {
-        const users = this.userModel.find();
-        return users;
+        return this.userModel.find();
     }
 
     findOne(id: string) {
@@ -40,6 +39,14 @@ export class UsersService {
 
             return this.userModel.findOne({ _id: id });
         } catch (error) {}
+    }
+
+    async findOneByUserName(userName: string) {
+        return await this.userModel.findOne({ email: userName });
+    }
+
+    isValidPassword(password: string, hash: string) {
+        return compareSync(password, hash);
     }
 
     update(updateUserDto: UpdateUserDto) {
@@ -52,7 +59,7 @@ export class UsersService {
     remove(id: string) {
         try {
             if (!mongoose.Types.ObjectId.isValid(id)) return 'not found user!';
-            
+
             return this.userModel.deleteOne({ _id: id });
         } catch (error) {}
     }
