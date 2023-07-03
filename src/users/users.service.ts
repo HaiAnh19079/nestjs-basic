@@ -45,8 +45,8 @@ export class UsersService {
         } catch (error) {}
     }
 
-    async findOneByUserName(userName: string) {
-        return await this.userModel.findOne({ email: userName });
+    findOneByUserName(userName: string) {
+        return this.userModel.findOne({ email: userName });
     }
 
     isValidPassword(password: string, hash: string) {
