@@ -1,10 +1,10 @@
 {
-  "printWidth": 80,
-  "eslintIntegration": true,
-  "stylelintIntegration": true,
-  "tabWidth": 4,
-  "singleQuote": true,
-  "trailingComma": "all",
-  "jsxBracketSameLine": true,
-  "bracketSpacing": true
+    "printWidth": 80,
+    "eslintIntegration": true,
+    "stylelintIntegration": true,
+    "tabWidth": 4,
+    "singleQuote": true,
+    "trailingComma": "all",
+    "jsxBracketSameLine": true,
+    "bracketSpacing": true
 }
