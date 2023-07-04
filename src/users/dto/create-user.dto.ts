@@ -24,4 +24,6 @@ export class CreateUserDto {
     //     message: 'password too weak',
     // })
     password: string;
+
+    role: string;
 }

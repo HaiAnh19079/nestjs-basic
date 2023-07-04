@@ -10,6 +10,7 @@ async function bootstrap() {
 
     const configService = app.get(ConfigService);
 
+    //config JwtAuthGuard globally
     const reflector = app.get(Reflector);
     app.useGlobalGuards(new JwtAuthGuard(reflector));
 
