@@ -67,4 +67,11 @@ export class UsersService {
             return this.userModel.softDelete({ _id: id });
         } catch (error) {}
     }
+    restore(id: string) {
+        try {
+            if (!mongoose.Types.ObjectId.isValid(id)) return 'not found user!';
+
+            return this.userModel.restore({ _id: id });
+        } catch (error) {}
+    }
 }

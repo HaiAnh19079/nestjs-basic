@@ -28,9 +28,12 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
         // You can throw an exception based on either "info" or "err" arguments
         if (err || !user) {
             throw (
-                err || new UnauthorizedException('Token của bạn không hợp lệ!')
+                err ||
+                new UnauthorizedException(
+                    'Token của bạn không hợp lệ or không có token?',
+                )
             );
         }
-        return user;
+        return user; //req.user
     }
 }
