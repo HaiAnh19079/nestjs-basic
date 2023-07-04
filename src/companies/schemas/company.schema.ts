@@ -14,23 +14,23 @@ export class Company {
     @Prop()
     description: string;
 
-    // @Prop()
-    // createdBy: {
-    //     _id: mongoose.Schema.Types.ObjectId;
-    //     email: string;
-    // };
+    @Prop({ type: Object })
+    createdBy: {
+        _id: mongoose.Schema.Types.ObjectId;
+        email: string;
+    };
 
-    // @Prop()
-    // updatedBy: {
-    //     _id: mongoose.Schema.Types.ObjectId;
-    //     email: string;
-    // };
+    @Prop({ type: Object })
+    updatedBy: {
+        _id: mongoose.Schema.Types.ObjectId;
+        email: string;
+    };
 
-    // @Prop()
-    // deletedBy: {
-    //     _id: mongoose.Schema.Types.ObjectId;
-    //     email: string;
-    // };
+    @Prop({ type: Object })
+    deletedBy: {
+        _id: mongoose.Schema.Types.ObjectId;
+        email: string;
+    };
 
     @Prop()
     createAt: Date;

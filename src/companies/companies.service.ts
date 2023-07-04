@@ -5,6 +5,7 @@ import { Company, CompanyDocument } from './schemas/company.schema';
 import { InjectModel } from '@nestjs/mongoose';
 import { SoftDeleteModel } from 'soft-delete-plugin-mongoose';
 import mongoose from 'mongoose';
+import { IUser } from 'src/users/users.interface';
 
 @Injectable()
 export class CompaniesService {
@@ -13,13 +14,17 @@ export class CompaniesService {
         private companyModel: SoftDeleteModel<CompanyDocument>,
     ) {}
 
-    async create(createCompanyDto: CreateCompanyDto) {
+    async create(createCompanyDto: CreateCompanyDto, user: IUser) {
         const { name, address, description } = createCompanyDto;
 
         let company = await this.companyModel.create({
             name,
             address,
             description,
+            createdBy: {
+                _id: user._id,
+                email: user.email,
+            },
         });
 
         return company;
@@ -39,32 +44,57 @@ export class CompaniesService {
         }
     }
 
-    update(updateCompanyDto: UpdateCompanyDto) {
-        if (!mongoose.Types.ObjectId.isValid(updateCompanyDto._id))
-            return 'not found company!';
+    update(id: string, updateCompanyDto: UpdateCompanyDto, user: IUser) {
+        if (!mongoose.Types.ObjectId.isValid(id)) return 'not found company!';
 
         return this.companyModel.updateOne(
-            { _id: updateCompanyDto._id },
+            { _id: id },
             {
                 ...updateCompanyDto,
+                updatedBy: {
+                    _id: user._id,
+                    email: user.email,
+                },
             },
         );
     }
 
-    remove(id: string) {
+    async remove(id: string, user: IUser) {
         try {
             if (!mongoose.Types.ObjectId.isValid(id))
                 return 'not found company!';
+            await this.companyModel.updateOne(
+                { _id: id },
+                {
+                    deletedBy: {
+                        _id: user._id,
+                        email: user.email,
+                    },
+                },
+            );
 
-            return this.companyModel.softDelete({ _id: id });
+            return this.companyModel.softDelete({
+                _id: id,
+            });
         } catch (error) {}
     }
 
-    restore(id: string) {
+    async restore(id: string, user: IUser) {
         try {
             if (!mongoose.Types.ObjectId.isValid(id)) return 'not found user!';
 
-            return this.companyModel.restore({ _id: id });
+            await this.companyModel.updateOne(
+                { _id: id },
+                {
+                    updatedBy: {
+                        _id: user._id,
+                        email: user.email,
+                    },
+                },
+            );
+            return this.companyModel.restore({
+                _id: id,
+            });
         } catch (error) {}
     }
 }

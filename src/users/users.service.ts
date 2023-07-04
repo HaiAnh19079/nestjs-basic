@@ -53,11 +53,8 @@ export class UsersService {
         return compareSync(password, hash);
     }
 
-    update(updateUserDto: UpdateUserDto) {
-        return this.userModel.updateOne(
-            { _id: updateUserDto._id },
-            { ...updateUserDto },
-        );
+    update(id: string, updateUserDto: UpdateUserDto) {
+        return this.userModel.updateOne({ _id: id }, { ...updateUserDto });
     }
 
     remove(id: string) {
