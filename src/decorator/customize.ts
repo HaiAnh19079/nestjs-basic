@@ -13,3 +13,9 @@ export const User = createParamDecorator(
         return request.user;
     },
 );
+
+// custom interceptor res message - decorator("res_message")
+export const RESPONSE_MESSAGE = 'responseMessage';
+export const ResponseMessage = (message: string) => {
+    return SetMetadata(RESPONSE_MESSAGE, message);
+};

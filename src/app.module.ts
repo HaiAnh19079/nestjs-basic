@@ -6,6 +6,9 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { UsersModule } from './users/users.module';
 import { AuthModule } from './auth/auth.module';
 import { softDeletePlugin } from 'soft-delete-plugin-mongoose';
+import { OrdersModule } from './orders/orders.module';
+import { TransformInterceptor } from './utils/transform.interceptor';
+import { APP_INTERCEPTOR } from '@nestjs/core';
 @Module({
     imports: [
         MongooseModule.forRootAsync({
@@ -27,8 +30,16 @@ import { softDeletePlugin } from 'soft-delete-plugin-mongoose';
         UsersModule,
 
         AuthModule,
+
+        OrdersModule,
     ],
     controllers: [AppController],
-    providers: [AppService],
+    providers: [
+        AppService,
+        {
+            provide: APP_INTERCEPTOR,
+            useClass: TransformInterceptor,
+        },
+    ],
 })
 export class AppModule {}
