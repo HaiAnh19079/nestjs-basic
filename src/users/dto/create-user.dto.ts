@@ -1,29 +1,57 @@
+import { Type } from 'class-transformer';
 import {
+    IsArray,
     IsEmail,
     IsNotEmpty,
-    IsPhoneNumber,
-    Matches,
-    MaxLength,
-    MinLength,
+    IsString,
+    ValidateNested,
 } from 'class-validator';
 
+class AddressDto {
+    @IsString()
+    address_value: string;
+
+    @IsString()
+    address_active: string;
+}
 export class CreateUserDto {
-    // @IsPhoneNumber()
-    phoneNumber: string;
-
-    @IsEmail()
-    @IsNotEmpty()
-    email: string;
-
+    @IsNotEmpty({ message: 'Name không được để trống!' })
     name: string;
 
-    @IsNotEmpty()
-    @MinLength(4)
-    @MaxLength(20)
-    // @Matches(/((?=.*\d)|(?=.*\W+))(?![.\n])(?=.*[A-Z])(?=.*[a-z]).*$/, {
-    //     message: 'password too weak',
-    // })
+    @IsNotEmpty({ message: 'Email không được để trống!' })
+    email: string;
+
+    @IsNotEmpty({ message: 'PhoneNumber không được để trống!' })
+    phoneNumber: string;
+
+    @IsNotEmpty({ message: 'Password không được để trống!' })
     password: string;
 
+    // @IsArray()
+    // @ValidateNested({ each: true })
+    // @Type(() => AddressDto)
+    // address: AddressDto[];
+
+    @IsNotEmpty({ message: 'Role không được để trống!' })
     role: string;
+}
+
+export class RegisterUserDto {
+    @IsNotEmpty({ message: 'Name không được để trống!' })
+    name: string;
+
+    @IsEmail()
+    @IsNotEmpty({ message: 'Email không được để trống!' })
+    email: string;
+
+    @IsNotEmpty({ message: 'PhoneNumber không được để trống!' })
+    phoneNumber: string;
+
+    @IsNotEmpty({ message: 'Password không được để trống!' })
+    password: string;
+
+    // @IsArray()
+    // @ValidateNested({ each: true })
+    // @Type(() => AddressDto)
+    // address: AddressDto[];
 }

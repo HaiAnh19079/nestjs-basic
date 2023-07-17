@@ -7,14 +7,14 @@ import { UsersModule } from './users/users.module';
 import { AuthModule } from './auth/auth.module';
 import { softDeletePlugin } from 'soft-delete-plugin-mongoose';
 import { OrdersModule } from './orders/orders.module';
-import { TransformInterceptor } from './utils/transform.interceptor';
-import { APP_INTERCEPTOR } from '@nestjs/core';
+
 @Module({
     imports: [
         MongooseModule.forRootAsync({
             imports: [ConfigModule],
             useFactory: async (configService: ConfigService) => ({
                 uri: configService.get<string>('MONGODB_URI'),
+
                 connectionFactory: (connection) => {
                     connection.plugin(softDeletePlugin);
                     return connection;
@@ -34,12 +34,6 @@ import { APP_INTERCEPTOR } from '@nestjs/core';
         OrdersModule,
     ],
     controllers: [AppController],
-    providers: [
-        AppService,
-        {
-            provide: APP_INTERCEPTOR,
-            useClass: TransformInterceptor,
-        },
-    ],
+    providers: [AppService],
 })
 export class AppModule {}

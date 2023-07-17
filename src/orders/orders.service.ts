@@ -102,7 +102,7 @@ export class OrdersService {
         const totalItems = (await this.orderModel.find(filter)).length;
         const totalPages = Math.ceil(totalItems / defaultLimit);
         if (isEmpty(sort)) {
-            sort = '-updatedAt';
+            sort = '-createdAt';
         }
         const result = await this.orderModel
             .find(filter)
