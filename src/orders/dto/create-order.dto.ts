@@ -7,10 +7,11 @@ import {
     IsArray,
     IsNotEmpty,
 } from 'class-validator';
-import { OrderStatus } from '../schemas/order.schema';
+import { OrderStatusEnum, PaymentMethodEnum } from '../schemas/order.schema';
 
 class SenderInformationDto {
-    @IsNotEmpty()
+    senderName: string;
+
     @IsString()
     senderAddress: string;
 
@@ -18,13 +19,14 @@ class SenderInformationDto {
     senderPhoneNumber: string;
 }
 
-class RecipientInformationDto {
-    @IsNotEmpty()
-    @IsString()
-    recipientAddress: string;
+class receiverInformationDto {
+    receiverName: string;
 
     @IsString()
-    recipientPhoneNumber: string;
+    receiverAddress: string;
+
+    @IsString()
+    receiverPhoneNumber: string;
 }
 
 class DeliveryInformationDto {
@@ -34,9 +36,13 @@ class DeliveryInformationDto {
 
     @ValidateNested()
     @IsObject()
-    recipientInformation: RecipientInformationDto;
+    receiverInformation: receiverInformationDto;
 }
-
+export enum sizeEnum {
+    S = 'S',
+    M = 'M',
+    L = 'L',
+}
 class ItemDetailsDto {
     @IsString()
     detailedInformation: string;
@@ -44,33 +50,32 @@ class ItemDetailsDto {
     @IsNumber()
     quantity: number;
 
-    @IsString()
-    size: string;
+    @IsEnum(sizeEnum)
+    size: sizeEnum;
 
-    @IsString()
-    weight: string;
+    @IsNumber()
+    weight: number;
 
     @IsString()
     typeItem: string;
 
-    @IsString()
-    itemValue: string;
+    @IsNumber()
+    itemValue: number;
 }
 
+export enum serviceTypeEnum {
+    SUPERCHEAP = 'SUPERCHEAP',
+    SUPERSPEED = 'SUPERSPEED',
+}
 class ServiceInformationDto {
-    @IsString()
-    ServiceType: string;
+    @IsEnum(serviceTypeEnum)
+    ServiceType: serviceTypeEnum;
 
     @IsString()
     preferredDeliveryTime: string;
 }
 
-class PaymentDto {
-    @IsString()
-    paymentMethod: string;
-}
-
-export class CreateOrderDto {
+export class CreateOrderDto1 {
     @ValidateNested()
     @IsObject()
     deliveryInformation: DeliveryInformationDto;
@@ -83,19 +88,78 @@ export class CreateOrderDto {
     @IsObject()
     serviceInformation: ServiceInformationDto;
 
-    @IsEnum(OrderStatus)
-    statusOrder: OrderStatus = OrderStatus.PROCESSING;
+    @IsEnum(OrderStatusEnum)
+    statusOrder: OrderStatusEnum = OrderStatusEnum.PROCESSING;
 
-    @ValidateNested()
-    @IsObject()
-    payment: PaymentDto;
+    @IsEnum(PaymentMethodEnum)
+    paymentmethod: PaymentMethodEnum;
 
-    @IsString()
-    totalOrderValue: string;
+    @IsNumber()
+    totalOrderValue: number;
 
-    @IsString()
-    shippingFee: string;
+    @IsNumber()
+    shippingFee: number;
 
-    // @IsString()
+    distance: number;
+
     totalPaymentAmount: string;
+}
+
+export class CreateOrderDto {
+    senderName: string;
+
+    @IsString()
+    senderAddress: string;
+
+    @IsString()
+    senderPhoneNumber: string;
+
+    @IsEnum(OrderStatusEnum)
+    statusOrder: OrderStatusEnum = OrderStatusEnum.PROCESSING;
+
+    receiverName: string;
+
+    @IsString()
+    receiverAddress: string;
+
+    @IsString()
+    receiverPhoneNumber: string;
+    //
+    @IsEnum(PaymentMethodEnum)
+    paymentmethod: PaymentMethodEnum;
+
+    @IsString()
+    detailedInformation: string;
+
+    @IsNumber()
+    quantity: number;
+
+    @IsEnum(sizeEnum)
+    size: sizeEnum;
+
+    @IsNumber()
+    weight: number;
+
+    @IsString()
+    typeItem: string;
+
+    @IsNumber()
+    itemValue: number;
+
+    //
+    @IsEnum(serviceTypeEnum)
+    ServiceType: serviceTypeEnum;
+
+    @IsString()
+    preferredDeliveryTime: string;
+
+    @IsNumber()
+    totalOrderValue: number;
+
+    @IsNumber()
+    shippingFee: number;
+
+    distance: number;
+    // @IsString()
+    totalPaymentAmount: number;
 }

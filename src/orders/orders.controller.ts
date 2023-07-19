@@ -12,7 +12,7 @@ import { OrdersService } from './orders.service';
 import { CreateOrderDto } from './dto/create-order.dto';
 import { UpdateOrderDto } from './dto/update-order.dto';
 import { IUser } from 'src/users/users.interface';
-import { ResponseMessage, User } from 'src/decorator/customize';
+import { Public, ResponseMessage, User } from 'src/decorator/customize';
 
 @Controller('orders')
 export class OrdersController {
@@ -23,6 +23,7 @@ export class OrdersController {
         return this.ordersService.create(createOrderDto, user);
     }
 
+    @Public()
     @Get()
     @ResponseMessage('get list order with paginate')
     findAll(

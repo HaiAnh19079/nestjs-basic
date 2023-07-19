@@ -4,25 +4,41 @@ import { User } from 'src/users/schemas/user.schema';
 
 export type OrderDocument = HydratedDocument<Order>;
 
-export enum OrderStatus {
-    PROCESSING = 'Đang xử lý',
-    CONFIRMED = 'Đã xác nhận',
-    ON_THE_WAY = 'Đang trên đường',
-    DELIVERED = 'Đã giao hàng',
-    FAILED = 'không thành công',
-    CANCELLED = 'Hủy',
+export enum OrderStatusEnum {
+    PROCESSING = 'PROCESSING',
+    CONFIRMED = 'CONFIRMED',
+    ON_THE_WAY = 'ON_THE_WAY',
+    DELIVERED = 'DELIVERED',
+    FAILED = 'FAILED',
+    CANCELLED = 'CANCELLED',
 }
+export enum PaymentMethodEnum {
+    CASH = 'CASH',
+    BANKING = 'BANKING',
+}
+export enum sizeEnum {
+    S = 'S',
+    M = 'M',
+    L = 'L',
+}
+export enum serviceTypeEnum {
+    SUPERCHEAP = 'SUPERCHEAP',
+    SUPERSPEED = 'SUPERSPEED',
+}
+
 @Schema({ timestamps: true })
 export class Order {
     @Prop({ type: Object })
     deliveryInformation: {
         senderInformation: {
+            senderName: string;
             senderAddress: string;
             senderPhoneNumber: string;
         };
-        recipientInformation: {
-            recipientAddress: string;
-            recipientPhoneNumber: string;
+        receiverInformation: {
+            receiverName: string;
+            receiverAddress: string;
+            receiverPhoneNumber: string;
         };
     };
 
@@ -30,7 +46,7 @@ export class Order {
     itemDetails: {
         detailedInformation: string; //description about the items
         quantity: number;
-        size: string;
+        size: sizeEnum; //enum
         weight: string;
         typeItem: string;
         itemValue: string; // estimated value of the items
@@ -38,14 +54,16 @@ export class Order {
 
     @Prop({ type: Object })
     serviceInformation: {
-        ServiceType: string; // for example, express delivery, economy delivery,...
-        preferredDeliveryTime: string; // the requested delivery time to the recipient's address
+        ServiceType: serviceTypeEnum; // enum
+        preferredDeliveryTime: string; // the requested delivery time to the receiver's address
     };
 
-    @Prop({ type: Object })
-    payment: {
-        paymentMethod: string; // for example,Thẻ Tín dụng/Ghi nợ ,Thanh toán khi nhận hàng,Chuyển khoản ngân hàng
-    };
+    @Prop({
+        type: String,
+        enum: PaymentMethodEnum,
+        default: PaymentMethodEnum.CASH,
+    })
+    paymentMethod: PaymentMethodEnum; // for example,Thẻ Tín dụng/Ghi nợ ,Thanh toán khi nhận hàng,Chuyển khoản ngân hàng
 
     @Prop({ type: Object })
     shipper: {
@@ -54,17 +72,24 @@ export class Order {
         phoneNumber: string;
     };
 
-    @Prop({ type: String, enum: OrderStatus, default: OrderStatus.PROCESSING })
-    statusOrder: OrderStatus;
+    @Prop({
+        type: String,
+        enum: OrderStatusEnum,
+        default: OrderStatusEnum.PROCESSING,
+    })
+    statusOrder: OrderStatusEnum;
 
     @Prop()
-    totalOrderValue: string;
+    totalOrderValue: number;
 
     @Prop()
-    shippingFee: string;
+    shippingFee: number;
 
     @Prop()
-    totalPaymentAmount: string;
+    totalPaymentAmount: number;
+
+    @Prop()
+    distance: number;
 
     @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'User' })
     user: User;

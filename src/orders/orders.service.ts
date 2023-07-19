@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { CreateOrderDto } from './dto/create-order.dto';
 import { UpdateOrderDto } from './dto/update-order.dto';
 import { IUser } from 'src/users/users.interface';
@@ -38,50 +38,66 @@ export class OrdersService {
     }
     async create(createOrderDto: CreateOrderDto, user: IUser) {
         const {
-            deliveryInformation,
-            itemDetails,
-            serviceInformation,
-            payment,
+            senderAddress,
+            senderPhoneNumber,
+            receiverAddress,
+            receiverPhoneNumber,
+            detailedInformation,
+            quantity,
+            size,
+            weight,
+            typeItem,
+            itemValue,
+            ServiceType,
+            preferredDeliveryTime,
+            paymentmethod,
             shippingFee,
             statusOrder,
             totalOrderValue,
+            totalPaymentAmount,
+            distance,
         } = createOrderDto;
-        let total_order_value = this.parseCurrencyString(totalOrderValue);
-        let shipping_fee = this.parseCurrencyString(shippingFee);
-        let total_payment_amount = this.addVietnameseCurrencies(
-            total_order_value,
-            shipping_fee,
-        );
 
-        let total_order_value_str =
-            this.convertToVietnameseCurrency(total_order_value);
-        let shipping_fee_str = this.convertToVietnameseCurrency(shipping_fee);
-
-        let item_value = this.convertToVietnameseCurrency(
-            this.parseCurrencyString(itemDetails?.itemValue),
-        );
         let order = await this.orderModel.create({
-            deliveryInformation,
-            itemDetails: {
-                ...itemDetails,
-                itemValue: item_value,
+            deliveryInformation: {
+                senderInformation: {
+                    senderAddress,
+                    senderPhoneNumber,
+                },
+                receiverInformation: {
+                    receiverAddress,
+                    receiverPhoneNumber,
+                },
             },
-            serviceInformation,
-            payment,
-            totalOrderValue: total_order_value_str,
-            shippingFee: shipping_fee_str,
+            itemDetails: {
+                detailedInformation, //description about the items
+                quantity,
+                size,
+                weight,
+                typeItem,
+                itemValue,
+            },
+            serviceInformation: {
+                ServiceType,
+                preferredDeliveryTime,
+            },
+            paymentmethod,
+            totalOrderValue: totalOrderValue,
+            shippingFee: shippingFee,
             statusOrder,
+            distance,
+
             createdBy: {
                 _id: user._id,
                 email: user.email,
                 phoneNumber: user.phoneNumber,
             },
-            totalPaymentAmount: total_payment_amount.toString(),
+            totalPaymentAmount: totalPaymentAmount,
         });
         return order;
     }
 
-    async findAll(page: number, limit: number, qs: string) {
+    async findAll(pageCurrent: number, limit: number, qs: string) {
         const { filter, projection, population } = aqp(qs);
         let { sort }: { sort: any } = aqp(qs);
         delete filter.page;
@@ -93,10 +109,7 @@ export class OrdersService {
             delete filter.senderPhoneNumber;
         }
 
-        console.log(
-            '🚀 ~ file: orders.service.ts:92 ~ OrdersService ~ findAll ~ filter:',
-            filter,
-        );
+        let page = pageCurrent ? pageCurrent : 1;
         let offset = (+page - 1) * +limit;
         let defaultLimit = +limit ? +limit : 10;
         const totalItems = (await this.orderModel.find(filter)).length;
@@ -114,7 +127,7 @@ export class OrdersService {
         return {
             meta: {
                 current: page, //trang hiện tại
-                pageSize: limit, //số lượng bản ghi đã lấy
+                pageSize: limit || defaultLimit, //số lượng bản ghi đã lấy
                 pages: totalPages, //tổng số trang với điều kiện query
                 total: totalItems, // tổng số phần tử (số bản ghi)
             },
@@ -128,7 +141,7 @@ export class OrdersService {
 
             return this.orderModel.findOne({ _id: id });
         } catch (error) {
-            throw new Error(error);
+            throw new BadRequestException(error);
         }
     }
 
