@@ -7,6 +7,7 @@ import { UsersModule } from './users/users.module';
 import { AuthModule } from './auth/auth.module';
 import { softDeletePlugin } from 'soft-delete-plugin-mongoose';
 import { OrdersModule } from './orders/orders.module';
+import { CompaniesModule } from './companies/companies.module';
 
 @Module({
     imports: [
@@ -32,6 +33,8 @@ import { OrdersModule } from './orders/orders.module';
         AuthModule,
 
         OrdersModule,
+
+        CompaniesModule,
     ],
     controllers: [AppController],
     providers: [AppService],
